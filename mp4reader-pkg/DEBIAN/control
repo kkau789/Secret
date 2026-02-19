@@ -1,0 +1,7 @@
+Package: mp4reader
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: KKAU789 <mauparna.s.gupta@gmail.com>
+Description: Simple MP4 reader for Termux

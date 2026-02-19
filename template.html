@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secure Vault</title>
+<style>
+body {
+    margin:0;
+    background: linear-gradient(135deg,#1f1c2c,#928dab);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:sans-serif;
+    color:white;
+}
+
+.card {
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    width:90%;
+    max-width:400px;
+}
+
+button {
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#00c6ff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#vault {
+    display:none;
+    margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>🔐 Secure Vault</h2>
+<button onclick="authenticate()">Unlock with Fingerprint</button>
+
+<div id="vault">
+<h3>Access Granted 🎉</h3>
+<p>Your secrets would appear here.</p>
+</div>
+</div>
+
+<script>
+async function authenticate() {
+    if (!window.PublicKeyCredential) {
+        alert("Biometric not supported.");
+        return;
+    }
+
+    try {
+        await navigator.credentials.get({
+            publicKey: {
+                challenge: new Uint8Array([1,2,3,4]),
+                timeout: 60000,
+                userVerification: "required"
+            }
+        });
+
+        document.getElementById("vault").style.display = "block";
+
+    } catch (err) {
+        alert("Fingerprint failed.");
+    }
+}
+</script>
+
+</body>
+</html>
