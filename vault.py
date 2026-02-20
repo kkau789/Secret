@@ -1,51 +1,46 @@
-import os
+from flask import Flask, request, redirect
 
-PIN = "1234"
+app = Flask(__name__)
+
 FILE = "secrets.txt"
+PIN = "1234"
 
-def clear():
-    os.system("clear")
-
-def login():
-    for i in range(3):
-        pin = input("Enter PIN: ")
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        pin = request.form.get("pin")
         if pin == PIN:
-            return True
+            return redirect("/vault")
         else:
-            print("Wrong PIN")
-    return False
+            return "Wrong PIN"
 
-def menu():
-    while True:
-        print("\n--- Secret Vault ---")
-        print("1. Add Note")
-        print("2. View Notes")
-        print("3. Exit")
-        choice = input("Choose: ")
+    return '''
+        <h2>Enter PIN</h2>
+        <form method="post">
+            <input type="password" name="pin">
+            <button type="submit">Login</button>
+        </form>
+    '''
 
-        if choice == "1":
-            note = input("Write secret note: ")
-            with open(FILE, "a") as f:
-                f.write(note + "\n")
-            print("Saved 🔐")
+@app.route("/vault", methods=["GET", "POST"])
+def vault():
+    if request.method == "POST":
+        note = request.form.get("note")
+        with open(FILE, "a") as f:
+            f.write(note + "\\n")
 
-        elif choice == "2":
-            if os.path.exists(FILE):
-                with open(FILE, "r") as f:
-                    print("\nYour Secrets:")
-                    print(f.read())
-            else:
-                print("No secrets yet.")
+    secrets = ""
+    try:
+        with open(FILE, "r") as f:
+            secrets = f.read()
+    except:
+        pass
 
-        elif choice == "3":
-            break
-
-        else:
-            print("Invalid option")
-
-clear()
-
-if login():
-    menu()
-else:
-    print("Access denied.")
+    return f'''
+        <h2>Secret Vault</h2>
+        <form method="post">
+            <input name="note">
+            <button type="submit">Add Note</button>
+        </form>
+        <pre>{secrets}</pre>
+    '''
