@@ -4,10 +4,10 @@ import os
 
 app = Flask(__name__)
 
-# Read environment variables from Render
-PIN = os.environ.get("PIN")
-FILE = os.environ.get("FILE")
-port = int(os.environ.get("PORT", 5000))
+# Read environment variables (lowercase)
+PIN = os.environ.get("pin")
+FILE = os.environ.get("file")
+port = int(os.environ.get("port", 5000))
 
 # Simple HTML template for web menu
 HTML_TEMPLATE = """
@@ -30,12 +30,14 @@ HTML_TEMPLATE = """
 {% endif %}
 """
 
+# Function to read secrets from file
 def read_secrets():
     if os.path.exists(FILE):
         with open(FILE, "r") as f:
             return f.read()
     return ""
 
+# Function to add a new secret
 def add_secret(note):
     with open(FILE, "a") as f:
         f.write(note + "\n")
